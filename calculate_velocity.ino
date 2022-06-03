@@ -32,7 +32,7 @@ void loop() {
     vx = horizontalVel(vx0, calculateVelocityX(ax));
     vy = verticalVel(vy0, calculateVelocityY(ay));
     finalVelocity += sqrt(pow(vx, 2) + pow(vy, 2));
-    Serial.print("Final velocity: "); Serial.print(finalVelocity / );
+    Serial.print("Final velocity: "); Serial.print(finalVelocity);
     Serial.print("\n\n");
     delay(readTime);
   }
@@ -43,15 +43,15 @@ float horizontalVel(float v0, float actualVel) {
 }
 
 float verticalVel(float v0, float actualVel) {
-  return vy * sin(angle) - g * readTime;
+  return vy * sin(angle) - g * (readTime / 1000);
 }
 
 float calculateVelocityX(int ax) {
-  vx0 = vx0 + (ax * readTime);
+  vx0 = vx0 + (ax * (readTime / 1000));
   return vx0;
 }
 
 float calculateVelocityY(int ay) {
-  vy0 = vy0 + (ay * readTime);
+  vy0 = vy0 + (ay * (readTime / 1000));
   return vy0;
 }
