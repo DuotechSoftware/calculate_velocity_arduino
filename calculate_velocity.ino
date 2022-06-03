@@ -2,8 +2,8 @@
 #include <I2Cdev.h>
 #include <MPU6050.h>
 
-MPU6050 sensor;
-float ax, ay, az;
+MPU6050 sensorFinal;
+int ax, ay, az;
 float vx0 = 0.0f;
 float vy0 = 0.0f;
 float vx = 0.0f;
@@ -17,13 +17,13 @@ float finalVelocity = 0.0f;
 void setup() {
   Serial.begin(57600);
   Wire.begin();
-  sensor.initialize();
-  if (sensor.testConnection()) Serial.println("Sensor initialized");
+  sensorFinal.initialize();
+  if (sensorFinal.testConnection()) Serial.println("Sensor initialized");
   else Serial.println("Error initializing sensor");
 }
 
 void loop() {
-  sensor.getAcceleration(&ax, &ay, &az);
+  sensorFinal.getAcceleration(&ax, &ay, &az);
   Serial.print("a[x y z]:\t");
   Serial.print(ax); Serial.print("\t");
   Serial.print(ay); Serial.print("\t");
@@ -31,22 +31,25 @@ void loop() {
   vx = horizontalVel(vx0, calculateVelocityX(ax));
   vy = verticalVel(vy0, calculateVelocityY(ay));
   finalVelocity += sqrt(pow(vx, 2) + pow(vy, 2));
-  Serial.printf("Final velocity: %f", finalVelocity);
+  Serial.print("Final velocity: "); Serial.print(finalVelocity);
+  Serial.print("\n\n");
   delay(readTime);
 }
 
-float horizontalVel(int v0, int actualVel) {
+float horizontalVel(float v0, float actualVel) {
   return vx * cos(angle);
 }
 
-float verticalVel(int v0, int actualVel) {
+float verticalVel(float v0, float actualVel) {
   return vy * sin(angle) - g * readTime;
 }
 
-void calculateVelocityX(float ax) {
+float calculateVelocityX(int ax) {
   vx0 = vx0 + (ax * readTime);
+  return vx0;
 }
 
-void calculateVelocityY(float ay) {
+float calculateVelocityY(int ay) {
   vy0 = vy0 + (ay * readTime);
+  return vy0;
 }
